@@ -1,0 +1,21 @@
+/*
+The following markup is for websequencediagrams.com as required in the exercise.
+*/
+
+
+note over browser:
+Data for the newe note is sent in the post data
+end note
+
+browser->server: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note
+server->server: Add new note to notes array
+server-->browser: 302 redirect to https://fullstack-exampleapp.herokuapp.com/notes
+
+note over browser:
+From here the same procedure as described
+for loading the notes page happens.
+The only difference is that
+our newly added note is returned by the server
+and shown in the browser.
+end note
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/notes

@@ -1,0 +1,27 @@
+/*
+The following markup is for websequencediagrams.com as required in the exercise.
+*/
+
+note over browser:
+User clicks save button, which
+has been bound to an anonymous function
+when spa.js was run.
+The function creates a JS object of the form
+{content: "content",
+date: new Date}
+end note
+
+browser->browser: Create JS object with new content
+browser->browser: Push new content to notes array
+browser->browser: Call redrawNotes to update DOM
+browser->server: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa
+server->browser: Response message
+browser->browser: Write server message to console
+
+note over browser:
+Please note that the above flow has a big flaw:
+If the server returns an error and is not able
+to save the new note, there will be an <bold>inconsistency</bold>
+between what is actually drawn on the screen and what
+is saved on the server
+end note:

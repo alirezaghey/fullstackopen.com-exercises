@@ -1,0 +1,30 @@
+/*
+The following markup is for websequencediagrams.com as required in the exercise.
+*/
+
+
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/spa
+server-->browser: Document with HTML markup
+
+note over browser:
+The browser find two addition resources
+in the HTML markup (CSS file and JS file)
+end note
+
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.css
+server-->browser: Document with CSS markup
+
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/spa.js
+server-->browser: Document with JS code
+
+note over browser:
+The browser runs the JS code
+as soon as it is fully loaded and
+initiating request for the notes data
+behind the scene.
+end note
+
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/data.json
+server-->browser: Document with notes data, JSON formatted
+
+browser->browser: Parse data nd redraw DOM tree
