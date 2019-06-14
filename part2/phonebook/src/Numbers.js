@@ -1,9 +1,9 @@
 import React from 'react';
 import Number from './Number';
 
-const Numbers = ({numbers}) => {
+const Numbers = ({persons}) => {
     return (
-        numbers.map(person => <Number number={person} key={person.name}/>)
+        persons.map(person => <Number person={person} key={person.id}/>)
     );
 };
 
