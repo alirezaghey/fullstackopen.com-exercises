@@ -1,6 +1,7 @@
 import React from 'react';
+import DetailedCountryWeather from './DetailedCountryWeather'
 
-const DetailedCountry = ({country}) => {
+const DetailedCountry = ({country, weather}) => {
     return (
         <div>
           <h3>{country.name}</h3>
@@ -10,7 +11,8 @@ const DetailedCountry = ({country}) => {
           <ol>
               {country.languages.map(language => <li key={language.name}>{language.name}</li>)}
           </ol>
-          <img src={country.flag}/>
+          <img src={country.flag} alt="alt text"/>
+          <DetailedCountryWeather weather={weather}/>
         </div>
     );
 };

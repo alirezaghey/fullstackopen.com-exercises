@@ -8,20 +8,30 @@ const App = () => {
   const [countries, setCountries] = useState([]);
   const [searchedCountry, setNewSearchedCountry] = useState('');
   const [detailedCountry, setDetailedCountry] = useState('');
+  const [detailedCountryWeather, setDetailedCountryWeather] = useState({});
 
   
   useEffect( () => {
     axios
       .get('https://restcountries.eu/rest/v2/name/' + searchedCountry)
       .then( res => {
-        res.status === 200 ? setCountries(res.data) : console.log("Not Found!")
+        if(res.status === 200) setCountries(res.data);
       })
       .catch( res => console.log(res))
   }, [searchedCountry])
+  
+  useEffect ( () => {
+    axios
+      .get('https://api.apixu.com/v1/current.json?key=fb558ca89abc47c29f8171838191706&q=' + detailedCountry)
+      .then(res => {
+        if(res.status === 200) setDetailedCountryWeather(res.data);
+      })
+      .catch(res => console.log(res));
+  }, [detailedCountry])
   return (
   
     <div><SearchCountries value={searchedCountry} handleSetNewSearchVal={(event) => setNewSearchedCountry(event.target.value)}></SearchCountries>
-    <Countries countries={countries} detailedCountry={detailedCountry} handleSetDetailedCountry={setDetailedCountry}/>
+    <Countries countries={countries} detailedCountry={detailedCountry} handleSetDetailedCountry={setDetailedCountry} weather={detailedCountryWeather}/>
       </div>
   );
 }
