@@ -1,8 +1,8 @@
 import React, { useState, useEffect} from 'react';
-import axios from 'axios';
 import Filter from './Filter';
 import PersonForm from './PersonForm';
 import Numbers from './Numbers';
+import NumbersService from './Services/Numbers';
 
 const App = () => {
   const [ persons, setPersons] = useState([]);
@@ -11,12 +11,9 @@ const App = () => {
   const [filter, setFilter] = useState('');
 
   useEffect( () => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then( res => {
-        console.log(res);
-        setPersons(res.data);
-      })
+    NumbersService
+      .getAll()
+      .then(numbers => setPersons(numbers));
   }, []);
 
   const filteredPersons = filter === '' ? persons :
@@ -27,12 +24,36 @@ const App = () => {
   const handleSubmit = event => {
     event.preventDefault();
     if (persons.some(person => person.name.toLocaleLowerCase() === newName.toLocaleLowerCase())) {
-      alert(`${newName} is already added to the phonebook!`);
-      return;
+      if(window.confirm(`${newName} is already in the phonebook! Update it?`)) {
+        const updatedPerson = persons.find(p => p.name.toLocaleLowerCase() === newName.toLocaleLowerCase())
+        NumbersService
+          .update(updatedPerson.id, {...updatedPerson, number: newPhone})
+          .then(res => {
+            setPersons(persons.map(person => person.id !== updatedPerson.id ? person : res));
+            setNewName('');
+            setNewPhone('');
+          })
+      }
     }
-    setPersons(persons.concat({name: newName, phone: newPhone}));
-    setNewName('');
-    setNewPhone('');
+    else {
+      const newPerson = {name: newName, number: newPhone};
+      NumbersService
+        .create(newPerson)
+        .then((res) => {
+          setPersons(persons.concat(res));
+          setNewName('');
+          setNewPhone('');
+        })
+    }
+  }
+  const handleDelete = id => {
+    NumbersService
+      .remove(id)
+      .then((res) => {
+        if (res.status === 200) {
+          setPersons(persons.filter(person => person.id !== id));
+        }
+      })
   }
   return (
     <div>
@@ -41,10 +62,14 @@ const App = () => {
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
 
       <h2>Add new</h2>
-      <PersonForm handleNameChange={handleNameChange} handleSubmit={handleSubmit} handlePhoneChange={handlePhoneChange} newName={newName} newPhone={newPhone}/>
+      <PersonForm
+        handleNameChange={handleNameChange}
+        handleSubmit={handleSubmit}
+        handlePhoneChange={handlePhoneChange}
+        newName={newName} newPhone={newPhone}/>
 
       <h2>Numbers</h2>
-      <Numbers persons={filteredPersons} />
+      <Numbers persons={filteredPersons} handleDelete={handleDelete} />
     </div>
   )
 }
