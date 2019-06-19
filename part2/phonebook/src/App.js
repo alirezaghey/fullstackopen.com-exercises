@@ -3,12 +3,14 @@ import Filter from './Filter';
 import PersonForm from './PersonForm';
 import Numbers from './Numbers';
 import NumbersService from './Services/Numbers';
+import Notification from './Notification/Notification';
 
 const App = () => {
   const [ persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newPhone, setNewPhone] = useState('');
   const [filter, setFilter] = useState('');
+  const [notification, setNotification] = useState('');
 
   useEffect( () => {
     NumbersService
@@ -32,6 +34,8 @@ const App = () => {
             setPersons(persons.map(person => person.id !== updatedPerson.id ? person : res));
             setNewName('');
             setNewPhone('');
+            setNotification(`${res.name}'s number was changed to ${res.number}!`);
+            setTimeout(() => setNotification(''), 5000);
           })
       }
     }
@@ -43,6 +47,8 @@ const App = () => {
           setPersons(persons.concat(res));
           setNewName('');
           setNewPhone('');
+          setNotification(`${res.name} with the number ${res.number} was added to the phonebook!`);
+          setTimeout(() => setNotification(''), 5000);
         })
     }
   }
@@ -51,12 +57,26 @@ const App = () => {
       .remove(id)
       .then((res) => {
         if (res.status === 200) {
-          setPersons(persons.filter(person => person.id !== id));
+          // setPersons(persons.filter(person => person.id !== id));
+          NumbersService
+            .getAll()
+            .then(numbers => setPersons(numbers));
+          setNotification(`Person with id ${id} has been removed from the phonebook!`)
+          setTimeout(() => setNotification(''), 5000);
         }
+      })
+      .catch(res => {
+        // console.log(res);
+        NumbersService
+        .getAll()
+        .then(numbers => setPersons(numbers));
+      setNotification(`Person with id ${id} was already removed from the phonebook!`)
+      setTimeout(() => setNotification(''), 5000);
       })
   }
   return (
     <div>
+      <Notification message={notification}/>
       <h1>Phonebook</h1>
 
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
